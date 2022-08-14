@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, Keyboard, TouchableOpacity, FlatList, Alert, ToastAndroid } from 'react-native'
+import { View, Text, TextInput, StyleSheet, Keyboard, TouchableOpacity, FlatList, Alert, ToastAndroid, useColorScheme } from 'react-native'
 import React, { useState, useReducer } from 'react'
 import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,6 +6,12 @@ import { initialState, reducer } from '../helpers/reducer';
 
 // 🔥🔥🔥🔥🔥🔥
 const Todo = () => {
+    const colorScheme = useColorScheme();
+    const themeTextStyle = colorScheme === 'light' ? styles.lightThemeText : styles.darkThemeText
+    const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer
+    console.log(themeTextStyle)
+    console.log(themeContainerStyle)
+
     const [todos, dispatch] = useReducer(reducer, initialState)
     const [value, setValue] = useState('')
 
@@ -36,8 +42,8 @@ const Todo = () => {
     }
 
     const Item = ({ title, id, complete }) => (
-        <View style={styles.item}>
-            <Text onPress={() => dispatch({ type: "COMPLETE", id })} style={[styles.title, { textDecorationLine: complete ? 'line-through' : 'none' }]}>{title} </Text>
+        <View style={[styles.item, themeContainerStyle]}>
+            <Text onPress={() => dispatch({ type: "COMPLETE", id })} style={[styles.title, { textDecorationLine: complete ? 'line-through' : 'none' }, themeTextStyle]}>{title} </Text>
             <TouchableOpacity style={{ padding: 6 }} onPress={() => deleteHandler(id)} >
                 <MaterialIcons name="delete" size={24} color="red" />
             </TouchableOpacity>
@@ -49,9 +55,9 @@ const Todo = () => {
     );
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={[styles.headerText, { fontVariant: ['small-caps'] }]}>Todo List</Text>
+        <View style={[styles.container, themeContainerStyle]}>
+            <View style={[styles.header, themeContainerStyle]}>
+                <Text style={[styles.headerText, themeTextStyle, { fontVariant: ['small-caps'] }]}>Todo List</Text>
             </View>
             <View style={styles.list}>
                 <FlatList
@@ -60,9 +66,9 @@ const Todo = () => {
                     keyExtractor={item => item.id}
                 />
             </View>
-            <View style={styles.bottomContainer}>
+            <View style={[styles.bottomContainer]}>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input]}
                     placeholder='Enter your task...'
                     defaultValue={value}
                     onChangeText={(value) => setValue(value)}
@@ -164,5 +170,19 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 26,
         flex: 1,
+    },
+
+    // 
+    lightContainer: {
+        backgroundColor: 'white',
+    },
+    darkContainer: {
+        backgroundColor: '#242c40',
+    },
+    lightThemeText: {
+        color: '#242c40',
+    },
+    darkThemeText: {
+        color: '#d0d0c0',
     },
 })
